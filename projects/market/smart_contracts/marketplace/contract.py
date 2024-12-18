@@ -1,31 +1,31 @@
-from algopy import Asset, UInt64, Global, Txn, UInt64,arc4,gtxn,itxn
-#from algopy.arc4 import abimethod
+from algopy import Asset, UInt64, Global, Txn, UInt64,gtxn,itxn
+from algopy.arc4 import abimethod, ARC4Contract
 
 
 # Digital Market Place Template
 
-class Marketplace(arc4.ARC4Contract):
+class Marketplace(ARC4Contract):
     
     # GLobal State Variables
     assetId : UInt64
     listingPrice: UInt64
 
     # create the app
-    @arc4.abimethod(allow_actions=["NoOp"], create="require")
+    @abimethod(allow_actions=["NoOp"], create="require")
     def createApplication(self, assetId: Asset, listingPrice: UInt64) -> None:
 
         self.assetId =assetId.id
         self.lsitingPrice = listingPrice
     
     # update the price listing
-    @arc4.abimethod
+    @abimethod
     def setPrice(self, listingPrice : UInt64) -> None:
         assert Txn.sender == Global.creator_address # This set price function can only be classed by the creator address
         self.listingPrice = listingPrice
 
 
     #opt in to the asset to be sold
-    @arc4.abimethod
+    @abimethod
     def optInToAsset(self, mbrPay: gtxn.PaymentTransaction) -> None:
         assert Txn.sender == Global.creator_address # Transation must be from creator address
         assert not Global.current_application_address.is_opted_in(Asset(self.assetId)) # make sure the dapp is not currently opted into this asset
@@ -35,13 +35,13 @@ class Marketplace(arc4.ARC4Contract):
 
         itxn.AssetTransfer(
             xfer_asset=self.assetId,
-            assset_receiver = Global.current_application_address,
+            asset_receiver = Global.current_application_address,
             asset_amount = 0,
         ).submit()
 
 
     # buy the asset
-    @arc4.abimethod
+    @abimethod
     def buy(self, buyerTxn : gtxn.PaymentTransaction , quantity: UInt64) -> None:
         assert self.listingPrice != UInt64(0) # make sure the asset quantity isn't zero
         assert Txn.sender == buyerTxn.sender # assert that the account that called the buy method is also the one that sent the payment transaction
@@ -56,7 +56,7 @@ class Marketplace(arc4.ARC4Contract):
         ).submit()
 
     # delete the application
-    @arc4.abimethod(allow_actions=["DeleteApplication"])
+    @abimethod(allow_actions=["DeleteApplication"])
     def deleteApplication(self) -> None:
         assert Txn.sender == Global.creator_address
 
@@ -66,7 +66,7 @@ class Marketplace(arc4.ARC4Contract):
             asset_receiver = Global.creator_address,
             asset_amount = 0,
             asset_close_to= Global.creator_address,
-        )
+        ).submit()
 
         # Withdraw all funds
         itxn.Payment(
