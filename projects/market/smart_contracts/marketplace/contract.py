@@ -1,5 +1,5 @@
 from algopy import Asset, UInt64, Global, Txn, UInt64,gtxn,itxn
-from algopy.arc4 import abimethod, ARC4Contract
+from algopy.arc4 import abimethod, ARC4Contract, String
 
 
 # Digital Market Place Template
@@ -74,3 +74,8 @@ class Marketplace(ARC4Contract):
             amount = 0,
             close_remainder_to = Global.creator_address
         ).submit()
+
+    # test integration
+    @abimethod
+    def hello(self, name :String) -> String:
+        return "Hello," + name

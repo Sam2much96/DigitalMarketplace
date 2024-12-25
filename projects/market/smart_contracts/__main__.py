@@ -2,7 +2,7 @@ import logging
 import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv #manually import this module to your builds folder
 
 from smart_contracts._helpers.build import build
 from smart_contracts._helpers.config import contracts
