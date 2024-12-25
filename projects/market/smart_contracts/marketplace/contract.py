@@ -66,13 +66,15 @@ class Marketplace(ARC4Contract):
             asset_receiver = Global.creator_address,
             asset_amount = 0,
             asset_close_to= Global.creator_address,
+            fee=1000,
         ).submit()
 
         # Withdraw all funds
         itxn.Payment(
             receiver = Global.creator_address,
             amount = 0,
-            close_remainder_to = Global.creator_address
+            close_remainder_to = Global.creator_address,
+            fee=1000,
         ).submit()
 
     # test integration

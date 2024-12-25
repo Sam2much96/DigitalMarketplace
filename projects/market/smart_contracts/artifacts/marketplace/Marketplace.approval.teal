@@ -1,7 +1,7 @@
 #pragma version 10
 
 smart_contracts.marketplace.contract.Marketplace.approval_program:
-    intcblock 0 1 4
+    intcblock 0 1 4 1000
     bytecblock "assetId" "listingPrice"
     callsub __puya_arc4_router__
     return
@@ -13,10 +13,10 @@ __puya_arc4_router__:
     // class Marketplace(ARC4Contract):
     proto 0 1
     txn NumAppArgs
-    bz __puya_arc4_router___after_if_else@10
-    pushbytess 0xa9113878 0xa8d205a2 0x37e84677 0x790bf59f 0x2487c32c // method "createApplication(asset,uint64)void", method "setPrice(uint64)void", method "optInToAsset(pay)void", method "buy(pay,uint64)void", method "deleteApplication()void"
+    bz __puya_arc4_router___after_if_else@11
+    pushbytess 0xa9113878 0xa8d205a2 0x37e84677 0x790bf59f 0x2487c32c 0x02bece11 // method "createApplication(asset,uint64)void", method "setPrice(uint64)void", method "optInToAsset(pay)void", method "buy(pay,uint64)void", method "deleteApplication()void", method "hello(string)string"
     txna ApplicationArgs 0
-    match __puya_arc4_router___createApplication_route@2 __puya_arc4_router___setPrice_route@3 __puya_arc4_router___optInToAsset_route@4 __puya_arc4_router___buy_route@5 __puya_arc4_router___deleteApplication_route@6
+    match __puya_arc4_router___createApplication_route@2 __puya_arc4_router___setPrice_route@3 __puya_arc4_router___optInToAsset_route@4 __puya_arc4_router___buy_route@5 __puya_arc4_router___deleteApplication_route@6 __puya_arc4_router___hello_route@7
     intc_0 // 0
     retsub
 
@@ -132,7 +132,30 @@ __puya_arc4_router___deleteApplication_route@6:
     intc_1 // 1
     retsub
 
-__puya_arc4_router___after_if_else@10:
+__puya_arc4_router___hello_route@7:
+    // smart_contracts/marketplace/contract.py:80-81
+    // # test integration
+    // @abimethod
+    txn OnCompletion
+    !
+    assert // OnCompletion is not NoOp
+    txn ApplicationID
+    assert // can only call when not creating
+    // smart_contracts/marketplace/contract.py:7
+    // class Marketplace(ARC4Contract):
+    txna ApplicationArgs 1
+    // smart_contracts/marketplace/contract.py:80-81
+    // # test integration
+    // @abimethod
+    callsub hello
+    pushbytes 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    retsub
+
+__puya_arc4_router___after_if_else@11:
     // smart_contracts/marketplace/contract.py:7
     // class Marketplace(ARC4Contract):
     intc_0 // 0
@@ -349,13 +372,14 @@ deleteApplication:
     global CreatorAddress
     ==
     assert
-    // smart_contracts/marketplace/contract.py:63-69
+    // smart_contracts/marketplace/contract.py:63-70
     // # withdraw all assets
     // itxn.AssetTransfer(
     //     xfer_asset = self.assetId,
     //     asset_receiver = Global.creator_address,
     //     asset_amount = 0,
     //     asset_close_to= Global.creator_address,
+    //     fee=1000,
     // ).submit()
     itxn_begin
     // smart_contracts/marketplace/contract.py:65
@@ -382,50 +406,80 @@ deleteApplication:
     // itxn.AssetTransfer(
     intc_2 // axfer
     itxn_field TypeEnum
-    intc_0 // 0
+    // smart_contracts/marketplace/contract.py:69
+    // fee=1000,
+    intc_3 // 1000
     itxn_field Fee
-    // smart_contracts/marketplace/contract.py:63-69
+    // smart_contracts/marketplace/contract.py:63-70
     // # withdraw all assets
     // itxn.AssetTransfer(
     //     xfer_asset = self.assetId,
     //     asset_receiver = Global.creator_address,
     //     asset_amount = 0,
     //     asset_close_to= Global.creator_address,
+    //     fee=1000,
     // ).submit()
     itxn_submit
-    // smart_contracts/marketplace/contract.py:71-76
+    // smart_contracts/marketplace/contract.py:72-78
     // # Withdraw all funds
     // itxn.Payment(
     //     receiver = Global.creator_address,
     //     amount = 0,
-    //     close_remainder_to = Global.creator_address
+    //     close_remainder_to = Global.creator_address,
+    //     fee=1000,
     // ).submit()
     itxn_begin
-    // smart_contracts/marketplace/contract.py:73
+    // smart_contracts/marketplace/contract.py:74
     // receiver = Global.creator_address,
     global CreatorAddress
-    // smart_contracts/marketplace/contract.py:75
-    // close_remainder_to = Global.creator_address
+    // smart_contracts/marketplace/contract.py:76
+    // close_remainder_to = Global.creator_address,
     dup
     itxn_field CloseRemainderTo
-    // smart_contracts/marketplace/contract.py:74
+    // smart_contracts/marketplace/contract.py:75
     // amount = 0,
     intc_0 // 0
     itxn_field Amount
     itxn_field Receiver
-    // smart_contracts/marketplace/contract.py:71-72
+    // smart_contracts/marketplace/contract.py:72-73
     // # Withdraw all funds
     // itxn.Payment(
     intc_1 // pay
     itxn_field TypeEnum
-    intc_0 // 0
+    // smart_contracts/marketplace/contract.py:77
+    // fee=1000,
+    intc_3 // 1000
     itxn_field Fee
-    // smart_contracts/marketplace/contract.py:71-76
+    // smart_contracts/marketplace/contract.py:72-78
     // # Withdraw all funds
     // itxn.Payment(
     //     receiver = Global.creator_address,
     //     amount = 0,
-    //     close_remainder_to = Global.creator_address
+    //     close_remainder_to = Global.creator_address,
+    //     fee=1000,
     // ).submit()
     itxn_submit
+    retsub
+
+
+// smart_contracts.marketplace.contract.Marketplace.hello(name: bytes) -> bytes:
+hello:
+    // smart_contracts/marketplace/contract.py:80-82
+    // # test integration
+    // @abimethod
+    // def hello(self, name :String) -> String:
+    proto 1 1
+    // smart_contracts/marketplace/contract.py:83
+    // return "Hello," + name
+    frame_dig -1
+    extract 2 0
+    pushbytes 0x48656c6c6f2c
+    swap
+    concat
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
     retsub
