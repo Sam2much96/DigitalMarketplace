@@ -3,6 +3,11 @@ from algopy.arc4 import abimethod, ARC4Contract, String
 
 
 # Digital Market Place Template
+# Documentation: https://algorandfoundation.github.io/puya/api-algopy.arc4.html#algopy.arc4.abimethod
+# Note:
+# Getting and reading from the smart contract different global and local states is free as user's txncarry the required fee
+# only inner transactions require an mbr fee
+
 
 class Marketplace(ARC4Contract):
     
@@ -10,6 +15,7 @@ class Marketplace(ARC4Contract):
     assetId : UInt64
     listingPrice: UInt64
 
+    
     # create the app
     @abimethod(allow_actions=["NoOp"], create="require")
     def createApplication(self, assetId: Asset, listingPrice: UInt64) -> None:
@@ -77,7 +83,7 @@ class Marketplace(ARC4Contract):
             fee=1000,
         ).submit()
 
-    # test integration
+
     @abimethod
     def hello(self, name :String) -> String:
         return "Hello," + name
