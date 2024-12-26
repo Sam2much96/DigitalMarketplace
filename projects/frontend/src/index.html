@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="button-container">
+        <button id="connectWallet">Connect Wallet</button>
+        <button id="updateListing">Update Listing</button>
+        <button id="showPrice">Price</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/algosdk@v2.9.0/dist/browser/algosdk.min.js"
+        integrity="sha384-R84o0hH3cBFIzv9uqyKcDNfDi/6jgn1MrS1/tOMDWxeh8hWfOLuRoMy0LekUm2KL"
+        crossorigin="anonymous"></script>
+
+    <script type="module" src="methods.js"></script>
+
+    <script>
+
+        class Wallet {
+
+            constructor() {
+                //super();
+                console.log("Connect Wallet");
+                this.ok = true;
+                this.status = 200;
+
+
+
+                this.generatedAccount = algosdk.generateAccount();
+                this.passphrase = algosdk.secretKeyToMnemonic(this.generatedAccount.sk);
+
+
+                //console.log(`My address: ${generatedAccount.addr}`);
+                //console.log(`My passphrase: ${passphrase}`);
+            }
+
+            json() {
+                // serialise algod initialisation to json
+                return {
+                    "address": this.generatedAccount.addr,
+                    "mnemonic": this.passphrase
+                }
+            }
+        }
+
+
+
+
+
+        //create algorand client
+
+        // Connect Wallet button logic
+        // Connect Wallet button logic
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            console.log("Connect Wallet clicked");
+            alert("Wallet connection initiated.");
+            // Add your wallet connection logic here
+
+            try {
+                // Fetch data from the backend
+                // local host testing:  'http://localhost:8000/api/connect_wallet'
+                // vercel hosting: '/api/connect_wallet'
+
+                // python code takes wayy to long to run
+
+                const response = new Wallet(); //await connectWallet();//fetch('/api/connect-wallet'); // Replace with your backend URL if hosted elsewhere
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                alert(`Wallet connected! Address: ${data.address}`);
+
+
+                //const result = await pyodide.runPythonAsync(pythonCode);
+                //console.log(result); // Outputs: Hello, World!
+
+                //console.log("Wallet connected:", data);
+            } catch (error) {
+                console.error("Error connecting wallet:", error);
+                alert("Failed to connect wallet. Please try again.");
+            }
+
+
+        });
+
+        // Update Listing button logic
+        document.getElementById('updateListing').addEventListener('click', () => {
+            console.log("Update Listing clicked");
+            alert("Listing updated.");
+            //const response = await fetch('/update-listing', { method: 'POST' });
+            //const data = await response.json();
+            alert(data.message);
+        });
+
+        // Price button logic
+        document.getElementById('showPrice').addEventListener('click', () => {
+            console.log("Price clicked");
+            //const response = await fetch('/price');
+            //const data = await response.json();
+            alert(`Current Price: $${data.price}`);
+        });
+    </script>
+</body>
+
+</html>
