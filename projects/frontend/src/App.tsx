@@ -5,7 +5,7 @@ import { PROVIDER_ID, ProvidersArray, WalletProvider, useInitializeProviders } f
 import algosdk from 'algosdk'
 import { SnackbarProvider } from 'notistack'
 import Home from './Home'
-import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from './utils/network/getAlgoClientConfigs'
+import { getAlgodConfigFromViteEnvironment, getKmdConfigFromViteEnvironment } from '../utils/network/getAlgoClientConfigs'
 
 let providersArray: ProvidersArray
 if (import.meta.env.VITE_ALGOD_NETWORK === '') {

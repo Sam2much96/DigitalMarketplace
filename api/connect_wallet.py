@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-from algokit_utils.beta.algorand_client import AlgorandClient
+#from algokit_utils.beta.algorand_client import AlgorandClient
 import json
 
 
@@ -8,15 +8,15 @@ import json
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Create an Algorand client
-        algorand = AlgorandClient.default_local_net()
+        #algorand = AlgorandClient.default_local_net()
         
         # Generate a new random account
-        creator = algorand.account.random()
+        #creator = algorand.account.random()
         
         # Prepare the response
         response = {
             "message": "Wallet connected.",
-            "address": creator.address,
+            "address": "", #creator.address,
         }
         
         # Send response headers
