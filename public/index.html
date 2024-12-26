@@ -51,10 +51,28 @@
         //create algorand client
 
         // Connect Wallet button logic
-        document.getElementById('connectWallet').addEventListener('click', () => {
+        // Connect Wallet button logic
+        document.getElementById('connectWallet').addEventListener('click', async () => {
             console.log("Connect Wallet clicked");
             alert("Wallet connection initiated.");
             // Add your wallet connection logic here
+
+            try {
+                // Fetch data from the backend
+                // local host testing:  'http://localhost:8000/api/connect_wallet'
+                // vercel hosting: '/api/connect_wallet'
+                const response = await fetch('/api/connect_wallet'); // Replace with your backend URL if hosted elsewhere
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                alert(`Wallet connected! Address: ${data.address}`);
+                console.log("Wallet connected:", data);
+            } catch (error) {
+                console.error("Error connecting wallet:", error);
+                alert("Failed to connect wallet. Please try again.");
+            }
 
 
         });
@@ -63,14 +81,17 @@
         document.getElementById('updateListing').addEventListener('click', () => {
             console.log("Update Listing clicked");
             alert("Listing updated.");
-            // Add your listing update logic here
+            //const response = await fetch('/update-listing', { method: 'POST' });
+            //const data = await response.json();
+            alert(data.message);
         });
 
         // Price button logic
         document.getElementById('showPrice').addEventListener('click', () => {
             console.log("Price clicked");
-            const price = 42; // Replace with dynamic price fetching logic
-            alert(`Current Price: $${price}`);
+            //const response = await fetch('/price');
+            //const data = await response.json();
+            alert(`Current Price: $${data.price}`);
         });
     </script>
 </body>
