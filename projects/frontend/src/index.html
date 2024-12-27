@@ -53,7 +53,9 @@
 
     <script type="module" src="methods.js"></script>
 
-    <script>
+    <script type="module">
+        import { create } from './methods.js'; // Import the `create` function from methods.js
+
 
         class Wallet {
 
@@ -86,8 +88,6 @@
 
 
 
-        //create algorand client
-
         // Connect Wallet button logic
         // Connect Wallet button logic
         document.getElementById('connectWallet').addEventListener('click', async () => {
@@ -111,10 +111,34 @@
                 alert(`Wallet connected! Address: ${data.address}`);
 
 
-                //const result = await pyodide.runPythonAsync(pythonCode);
-                //console.log(result); // Outputs: Hello, World!
 
-                //console.log("Wallet connected:", data);
+                //create algorand client and Marketplace Client
+
+                const algodToken = 'a'.repeat(64); // local net token
+                const algodServer = 'http://localhost';
+                const algodPort = 4001;
+                const algodHeaders = null;//await algod(); // for custom algod headers
+                const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+
+                const algorand = algodClient;
+                const dmClient = null;
+
+
+                // create asset creation variables
+                const sender = data.address; // Replace with dynamic wallet address
+                const assetBeingSold = BigInt(0);
+                const listingPrice = BigInt(100_000);
+                const quantity = BigInt(10);
+
+                //call the create Marketplace code from the methods.ts compiled code
+                const createMarketplace = await create(algorand, dmClient, assetBeingSold, listingPrice, quantity, sender);
+
+                // run all smart contract tests
+                await createMarketplace(); // Execute the async create function
+                //await createMarketplace.buy();
+                //await createMarketplace.deleteApplication();
+
+
             } catch (error) {
                 console.error("Error connecting wallet:", error);
                 alert("Failed to connect wallet. Please try again.");
